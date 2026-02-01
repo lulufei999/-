@@ -5,9 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="author" content="lulufei999">
-  <!-- 手机端自适应核心代码 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <!-- 优化手机触摸点击体验 -->
   <meta name="msapplication-tap-highlight" content="no">
   <title>四卷天书</title>
   <style>
@@ -21,10 +19,13 @@
       background: #0f172a;
       color: #e2e8f0;
       min-height: 100vh;
-      background-image: url('https://picsum.photos/id/1071/1920/1080');
+      /* 仙侠风核心背景图：高分辨率云雾仙山，贴合修仙主题 */
+      background-image: url('https://picsum.photos/id/152/1920/1080');
       background-size: cover;
       background-attachment: fixed;
       background-position: center;
+      /* 背景融合，避免遮挡文字，增强仙侠沉浸感 */
+      background-blend-mode: overlay;
     }
     .scroll-hide {
       overflow: hidden;
@@ -113,7 +114,7 @@
       border-radius: 4px;
       background: rgba(0, 0, 0, 0.3);
     }
-    /* 各天书配色 */
+    /* 四卷天书专属配色 */
     .primary {
       background: #0f766e;
       color: #ffffff;
@@ -206,7 +207,7 @@
       border-bottom: none;
       margin-bottom: 0;
     }
-    /* 响应式适配 */
+    /* 移动端自适应：手机/平板完美适配 */
     @media (max-width: 768px) {
       .container {
         padding: 15px;
@@ -248,12 +249,13 @@
   </style>
 </head>
 <body class="scroll-hide">
-  <!-- 背景音乐：西瓜jun《至尊》 -->
+  <!-- 仙侠背景音乐：西瓜jun《至尊》，循环播放 -->
   <audio src="https://cdn.jsdelivr.net/gh/yyyymmdddxxx/music-resource@main/zhizun-xiguajun.mp3" loop autoplay preload="auto" controls style="position:fixed;bottom:20px;left:20px;width:120px;opacity:0.3;z-index:9999;">
     您的浏览器不支持音频播放
   </audio>
 
   <div class="container">
+    <!-- 开始页面：四卷天书选择 -->
     <div class="title-box" id="start-box">
       <h1 class="main-title">四卷天书</h1>
       <p class="sub-title">一念成仙，一念成魔，大道三千，各取其一</p>
@@ -265,12 +267,14 @@
       </div>
     </div>
 
+    <!-- 剧情页面：分支故事内容 -->
     <div class="story-box" id="story-box" style="display: none;">
       <h2 class="story-title" id="story-title"></h2>
       <div class="story-content" id="story-content"></div>
       <div class="options-box" id="options-box"></div>
     </div>
 
+    <!-- 结局页面：最终结果展示 -->
     <div class="story-box end-box" id="end-box" style="display: none;">
       <h2 class="end-title" id="end-title"></h2>
       <div class="end-content" id="end-content"></div>
@@ -278,15 +282,15 @@
     </div>
   </div>
 
+  <!-- 选择轨迹：悬浮展示所有选择记录 -->
   <div class="trace-box" id="trace-box">
     <h3 class="trace-title">选择轨迹</h3>
     <ul class="trace-list" id="trace-list"></ul>
   </div>
 
   <script>
-    // 剧情数据总库
+    // 核心剧情数据：四卷天书全分支+所有结局
     const storyData = {
-      // 长生诀主分支
       changsheng: {
         id: 'changsheng',
         title: '玄元道宗悟长生',
@@ -298,7 +302,6 @@
         ],
         color: 'primary'
       },
-      // 长生诀-放弃双莲 初始分支
       changsheng-qilian: {
         id: 'changsheng-qilian',
         title: '弃莲归心，悟长生本道',
@@ -312,7 +315,6 @@
         ],
         color: 'primary'
       },
-      // 长生诀-放弃双莲 分支1
       changsheng-qilian-1: {
         id: 'changsheng-qilian-1',
         title: '孤身探境，道心自守',
@@ -323,7 +325,6 @@
         ],
         color: 'primary'
       },
-      // 长生诀-放弃双莲 分支2
       changsheng-qilian-2: {
         id: 'changsheng-qilian-2',
         title: '聚贤同心，共破幻境',
@@ -334,7 +335,6 @@
         ],
         color: 'primary'
       },
-      // 长生诀-放弃双莲 分支3
       changsheng-qilian-3: {
         id: 'changsheng-qilian-3',
         title: '寻宝固心，稳扎稳打',
@@ -345,7 +345,6 @@
         ],
         color: 'primary'
       },
-      // 长生诀-放弃双莲 分支4
       changsheng-qilian-4: {
         id: 'changsheng-qilian-4',
         title: '传讯求援，共渡危局',
@@ -356,7 +355,6 @@
         ],
         color: 'primary'
       },
-      // 长生诀-放弃双莲 分支5
       changsheng-qilian-5: {
         id: 'changsheng-qilian-5',
         title: '道心渡魔，仁心济世',
@@ -367,7 +365,6 @@
         ],
         color: 'primary'
       },
-      // 星河令主分支
       xinghe: {
         id: 'xinghe',
         title: '星河仙宗掌星力',
@@ -379,7 +376,6 @@
         ],
         color: 'star'
       },
-      // 星河令-放弃阵眼 初始分支
       xinghe-qizhen: {
         id: 'xinghe-qizhen',
         title: '弃阵归心，悟星河本道',
@@ -393,7 +389,6 @@
         ],
         color: 'star'
       },
-      // 星河令-放弃阵眼 分支1
       xinghe-qizhen-1: {
         id: 'xinghe-qizhen-1',
         title: '孤勇撼星，星心无改',
@@ -404,7 +399,6 @@
         ],
         color: 'star'
       },
-      // 星河令-放弃阵眼 分支2
       xinghe-qizhen-2: {
         id: 'xinghe-qizhen-2',
         title: '观星定位，同心破劫',
@@ -415,7 +409,6 @@
         ],
         color: 'star'
       },
-      // 星河令-放弃阵眼 分支3
       xinghe-qizhen-3: {
         id: 'xinghe-qizhen-3',
         title: '寻玉固核，稳解星劫',
@@ -426,7 +419,6 @@
         ],
         color: 'star'
       },
-      // 星河令-放弃阵眼 分支4
       xinghe-qizhen-4: {
         id: 'xinghe-qizhen-4',
         title: '联族借力，共护星河',
@@ -437,7 +429,6 @@
         ],
         color: 'star'
       },
-      // 星河令-放弃阵眼 分支5
       xinghe-qizhen-5: {
         id: 'xinghe-qizhen-5',
         title: '核引星力，温和归位',
@@ -448,7 +439,6 @@
         ],
         color: 'star'
       },
-      // 天魔策主分支
       tianmo: {
         id: 'tianmo',
         title: '天魔谷中掌魔威',
@@ -460,7 +450,6 @@
         ],
         color: 'devil'
       },
-      // 天魔策-放弃天魔印 初始分支
       tianmo-qiyin: {
         id: 'tianmo-qiyin',
         title: '弃印归心，悟天魔本道',
@@ -474,7 +463,6 @@
         ],
         color: 'devil'
       },
-      // 天魔策-放弃天魔印 分支1
       tianmo-qiyin-1: {
         id: 'tianmo-qiyin-1',
         title: '孤勇破阵，魔心无改',
@@ -485,7 +473,6 @@
         ],
         color: 'devil'
       },
-      // 天魔策-放弃天魔印 分支2
       tianmo-qiyin-2: {
         id: 'tianmo-qiyin-2',
         title: '凝魔成阵，同心破局',
@@ -496,7 +483,6 @@
         ],
         color: 'devil'
       },
-      // 天魔策-放弃天魔印 分支3
       tianmo-qiyin-3: {
         id: 'tianmo-qiyin-3',
         title: '寻晶固心，稳破剑阵',
@@ -507,7 +493,6 @@
         ],
         color: 'devil'
       },
-      // 天魔策-放弃天魔印 分支4
       tianmo-qiyin-4: {
         id: 'tianmo-qiyin-4',
         title: '联宗借力，共护天魔',
@@ -518,7 +503,6 @@
         ],
         color: 'devil'
       },
-      // 天魔策-放弃天魔印 分支5
       tianmo-qiyin-5: {
         id: 'tianmo-qiyin-5',
         title: '心引融道，魔道共生',
@@ -529,7 +513,6 @@
         ],
         color: 'devil'
       },
-      // 大荒神陨录主分支
       dahuang: {
         id: 'dahuang',
         title: '大荒部落炼兽体',
@@ -541,7 +524,6 @@
         ],
         color: 'wild'
       },
-      // 大荒神陨录-放弃双机缘 初始分支
       dahuang-qiqi: {
         id: 'dahuang-qiqi',
         title: '弃缘归心，悟大荒本道',
@@ -555,7 +537,6 @@
         ],
         color: 'wild'
       },
-      // 大荒神陨录-放弃双机缘 分支1
       dahuang-qiqi-1: {
         id: 'dahuang-qiqi-1',
         title: '孤勇撼咒，万灵无改',
@@ -566,7 +547,6 @@
         ],
         color: 'wild'
       },
-      // 大荒神陨录-放弃双机缘 分支2
       dahuang-qiqi-2: {
         id: 'dahuang-qiqi-2',
         title: '凝灵成阵，同心解劫',
@@ -577,7 +557,6 @@
         ],
         color: 'wild'
       },
-      // 大荒神陨录-放弃双机缘 分支3
       dahuang-qiqi-3: {
         id: 'dahuang-qiqi-3',
         title: '寻晶固灵，稳解咒劫',
@@ -588,7 +567,6 @@
         ],
         color: 'wild'
       },
-      // 大荒神陨录-放弃双机缘 分支4
       dahuang-qiqi-4: {
         id: 'dahuang-qiqi-4',
         title: '联灵借力，共护大荒',
@@ -599,7 +577,6 @@
         ],
         color: 'wild'
       },
-      // 大荒神陨录-放弃双机缘 分支5
       dahuang-qiqi-5: {
         id: 'dahuang-qiqi-5',
         title: '心引化枯，万灵共生',
@@ -610,11 +587,9 @@
         ],
         color: 'wild'
       },
-      // 结局库-长生诀
+      // 长生诀结局
       'end1-1': { id: 'end1-1', title: '长生仙尊', content: '你弃心魔莲而采长生莲，药力入体，千年寿元加身，乙木灵体愈发纯粹，道心无垢，修为稳步提升。百年结丹，五百年化婴，千年炼虚，最终悟透长生大道，证道「长生仙尊」，坐镇玄元道宗，引天地生机滋养宗门，护佑一方仙道昌盛，寿元与天地同齐，成为修仙界不朽的传说。【结局：长生仙尊，道泽万世】', isEnd: true, color: 'primary' },
       'end1-2': { id: 'end1-2', title: '短命魔仙', content: '你采下心魔莲，药力入体，修为一日千里，半年便凝液，一年便结丹，却也引长生道韵反噬，乙木灵体受损，寿元折损九成。你虽成一方魔仙，战力强横，却活不过三十载，最终在寿元耗尽之际，坐化于玄元山脚下，临终前悔悟，却已无力回天，只留一句「长生非速，守心方久」。【结局：短命魔仙，悔不当初】', isEnd: true, color: 'primary' },
-      'end1-3': { id: 'end1-3', title: '长生真人', content: '你以纯粹道心压制心魔，不耗自身灵元，转而引导天地生机，滋养被心魔侵蚀的弟子，同时寻得「清心莲」，搭配《长生诀》下册，成功研制出除魔丹，既净化了秘境心魔，又保全了自身修为。此后你继续潜心悟道，不追寿元、不恋权位，百年结丹，五百年化婴，最终悟透长生本道，证道「长生真人」，寿元绵长却不执着，常年云游四方，以道心渡化世人，成为修仙界道心的标杆。【结局：长生真人，道心永存】', isEnd: true, color: 'primary' },
-      'end1-4': { id: 'end1-4', title: '道心圣祖', content: '你毅然耗尽自身乙木灵元，引天地生机化作清心之光，笼罩整个玄元道宗，净化了所有心魔，包括秘境中的心魔莲本源。灵元耗尽之际，你的道心却突破桎梏，肉身虽陨，神魂却与天地生机相融，化作「道心圣像」，坐镇玄元山秘境，庇佑宗门万年无虞。后世修士皆以你为榜样，铭记「长生在心，不在外物」的至理，你也被尊为「道心圣祖」，名垂仙史，万古流芳。【结局：道心圣祖，神魂不朽】', isEnd: true, color: 'primary' },
       'end1-5': { id: 'end1-5', title: '孤绝道君', content: '你击碎道心碎片，彻底断绝心魔根源，自身道心虽受重创，却始终未曾动摇。返回玄元道宗后，你闭门修炼百年，以天地生机修复道心，乙木灵体愈发纯粹，最终悟透「孤绝道心」的真谛，证道「孤绝道君」。你不恋宗门权位，不结仙缘，常年隐居玄元山深处，偶尔下山渡化道心不坚的修士，虽孤寂一生，却道心永存，寿元绵长。【结局：孤绝道君，道心无垢】', isEnd: true, color: 'primary' },
       'end1-6': { id: 'end1-6', title: '融魔道尊', content: '你以纯粹道心为引，炼化道心碎片中的魔气，将碎片融入自身道心，既没有被魔气侵蚀，反而借魔气之力完善《长生诀》，创造出「心魔长生道」。你突破桎梏，证道「融魔道尊」，可自由掌控魔气与生机，既不做正道楷模，也不做魔道枭雄，独树一帜，常年云游天下，探寻长生终极奥秘，成为修仙界最神秘的存在。【结局：融魔道尊，独树一帜】', isEnd: true, color: 'primary' },
       'end1-7': { id: 'end1-7', title: '护宗圣君', content: '你毅然献祭自身灵元，催动宗门秘宝，击溃心魔巨影，彻底化解玄元道宗危机，而你自身则灵元耗尽，肉身濒临消散。万幸你道心纯粹，乙木灵体与天地生机深度绑定，神魂未灭，被长老们以宗门至宝护住，历经千年重塑肉身，最终证道「护宗圣君」，坐镇玄元道宗，庇佑宗门弟子，成为宗门万年以来最受敬仰的圣祖之一。【结局：护宗圣君，宗门永庇】', isEnd: true, color: 'primary' },
@@ -625,7 +600,7 @@
       'end1-12': { id: 'end1-12', title: '果决道君', content: '你力排众议，主张彻底击碎道心碎片，以绝后患，虽得罪部分主张炼化碎片的仙门，却彻底化解了心魔危机。此后你返回玄元道宗，潜心悟道，凭借果决道心与先天乙木灵体，最终证道「果决道君」。你一生行事果决，不优柔寡断，道心纯粹，常年云游天下，斩除心魔隐患，成为修仙界最令人信服的道君之一。【结局：果决道君，斩魔无优】', isEnd: true, color: 'primary' },
       'end1-13': { id: 'end1-13', title: '仁心道祖', content: '你接纳上古求道者残魂，以自身道心引导其净化魔气，与残魂共修长生之道，残魂也将自身上古求道经验传授于你。你借此悟透「仁心渡世」的真谛，先天乙木灵体进化为「万灵道体」，可引万灵之力渡化心魔，最终证道「仁心道祖」。你走遍天下，渡化所有被困心魔，引导世人向善，成为修仙界仁心的象征，寿元无尽，万古流芳。【结局：仁心道祖，渡化众生】', isEnd: true, color: 'primary' },
       'end1-14': { id: 'end1-14', title: '渡世道君', content: '你引导上古求道者残魂转世投胎，重塑道心，自身则继续耗费灵元，温和净化心魔幻境剩余魔气，让秘境恢复生机。此后你潜心悟道，悟透「渡世不渡己」的真谛，常年云游四方，渡化道心不坚、沾染魔气的修士，最终证道「渡世道君」。你不追求自身长生极致，却以渡世为己任，被天下修士敬仰，神魂与天地共生，永世不灭。【结局：渡世道君，永世渡人】', isEnd: true, color: 'primary' },
-      // 结局库-星河令
+      // 星河令结局
       'end2-1': { id: 'end2-1', title: '星河帝君', content: '你承下星河阵眼之责，以星辰灵体为引，永世镇守星河天宫，星河之力随你心意而动，可召亿万星辰降世，威力无穷。你成为星河仙宗史上最年轻的宗主，带领宗门走向鼎盛，威压整个星际，最终证道「星河帝君」，与星河同生共死，成为星际中不朽的星辰之主，万族敬仰，名垂星际万古。【结局：星河帝君，星耀万古】', isEnd: true, color: 'star' },
       'end2-2': { id: 'end2-2', title: '逍遥星仙', content: '你弃星河阵眼之责，携《星河令》云游星际四方，不被宗门束缚，不恋权位虚名，在星际中寻幽探胜，遇强则强，遇弱则扶。你修得一身绝世星力，可自由穿梭星际，逍遥自在，最终证道「逍遥星仙」，无拘无束，与星辰为伴，笑看星际变迁，成为星际中最洒脱的存在。【结局：逍遥星仙，无拘无束】', isEnd: true, color: 'star' },
       'end2-3': { id: 'end2-3', title: '孤绝星君', content: '你击碎陨星核心，彻底断绝混沌之力，自身星核灵体虽受重创，却始终星心坚定。返回星河天宫后，你闭门修炼千年，以星河核心之力修复灵体，星核灵体愈发纯粹，最终悟透「孤绝星道」，证道「孤绝星君」。你不恋宗门权位，不结星际仙缘，常年隐居星河核心，偶尔引星力渡化星际迷途者，虽孤寂一生，却星心永存，与星河同寿。【结局：孤绝星君，星心无垢】', isEnd: true, color: 'star' },
@@ -638,7 +613,7 @@
       'end2-10': { id: 'end2-10', title: '果决星君', content: '你力排众议，主张彻底击碎陨星核心，以绝混沌后患，虽得罪部分主张封印的异族，却彻底化解了星陨之灾。此后你返回星河天宫，潜心悟道，凭借果决星心与先天星河道体，最终证道「果决星君」。你一生行事果决，不优柔寡断，星心纯粹，常年游弋星际，斩除混沌星力隐患，成为星际最令人信服的星君。【结局：果决星君，斩沌无忧】', isEnd: true, color: 'star' },
       'end2-11': { id: 'end2-11', title: '仁星河祖', content: '你接纳上古星河守护者的星魂碎片，以星核灵体净化其混沌之力，与星魂共护星河，星魂也将上古星河守护之法传授于你。你借此悟透「仁心护星」的真谛，先天星河道体进化为「万星道体」，可引万星之力净化混沌，最终证道「仁星河祖」。你走遍星际，渡化所有混沌星力，守护星际万族，成为星际仁心的象征，与星河同寿，万古流芳。【结局：仁星河祖，护佑星际】', isEnd: true, color: 'star' },
       'end2-12': { id: 'end2-12', title: '渡星际君', content: '你引导上古星河守护者的星魂碎片转世投胎，重塑星心，自身则继续耗费星力，温和归位紊乱的星河之力，让星河恢复生机。此后你潜心悟道，悟透「渡星不渡己」的真谛，常年游弋星际，渡化星际迷途者、净化零散混沌星力，最终证道「渡星际君」。你不追求自身星力极致，却以护星渡世为己任，被星际万族敬仰，星魂与星河共生，永世不灭。【结局：渡星际君，永世护星】', isEnd: true, color: 'star' },
-      // 结局库-天魔策
+      // 天魔策结局
       'end3-1': { id: 'end3-1', title: '天魔圣祖', content: '你引动天魔印，燃自身魔魂爆发出十倍力量，魔焰滔天，一击便击溃仙门联军，护得天魔谷周全。虽折损千年寿元，却因护谷之功被谷中弟子奉若神明，谷主传位与你，你带领天魔谷休养生息，威压魔道诸宗，最终证道「天魔圣祖」，成为魔道至高无上的存在，魔名震彻三界，无人敢惹。【结局：天魔圣祖，魔威盖世】', isEnd: true, color: 'devil' },
       'end3-2': { id: 'end3-2', title: '复仇魔尊', content: '你弃天魔印，率谷中弟子退守魔渊，忍辱负重，潜心修炼《天魔策》，融合魔渊煞气，魔功大进。百年后，你率魔渊大军卷土重来，魔焰所到之处仙门皆灭，血洗当年围剿天魔谷的仙门联军，大仇得报，最终证道「复仇魔尊」，独霸一方，成为三界中令人闻风丧胆的存在。【结局：复仇魔尊，血洗仙门】', isEnd: true, color: 'devil' },
       'end3-3': { id: 'end3-3', title: '孤绝魔君', content: '你击碎除魔晶核，彻底断绝除魔剑阵之力，自身魔心灵体虽受重创，却始终魔心坚定。返回天魔谷后，你闭门修炼五千年，以魔渊煞气修复灵体，魔心灵体愈发纯粹，最终悟透「孤绝魔道」，证道「孤绝魔君」。你不恋谷中权位，不结魔道之缘，常年隐居魔渊深处，偶尔引纯质魔焰渡化魔道迷途者，虽孤寂一生，却魔心永存，与魔渊同寿。【结局：孤绝魔君，魔心无垢】', isEnd: true, color: 'devil' },
@@ -651,7 +626,7 @@
       'end3-10': { id: 'end3-10', title: '果决魔君', content: '你力排众议，主张彻底击碎除魔晶核，以绝剑阵后患，虽得罪部分主张炼化的魔宗，却彻底化解了天魔谷之危。此后你返回天魔谷，潜心悟道，凭借果决魔心与先天天魔道体，最终证道「果决魔君」。你一生行事果决，不优柔寡断，魔心纯粹，常年游弋三界，斩除除魔剑阵隐患，成为魔道最令人信服的魔君。【结局：果决魔君，斩阵无忧】', isEnd: true, color: 'devil' },
       'end3-11': { id: 'end3-11', title: '仁心魔祖', content: '你接纳上古道魔双修者的道魔魂碎片，以魔心灵体调和其道魔失衡之力，与魂碎片共修天魔道，魂碎片也将上古道魔双修之法传授于你。你借此悟透「仁心护魔」的真谛，先天天魔道体进化为「万魔道体」，可引万魔之力融合正道，最终证道「仁心魔祖」。你走遍三界，渡化魔道迷途者，调和道魔纷争，成为魔道仁心的象征，与魔渊同寿，万古流芳。【结局：仁心魔祖，护佑魔道】', isEnd: true, color: 'devil' },
       'end3-12': { id: 'end3-12', title: '渡魔魔君', content: '你引导上古道魔双修者的道魔魂碎片转世投胎，重塑道魔心，自身则继续耗费魔心之力，温和调和除魔剑阵的正道之力，让天魔谷恢复生机。此后你潜心悟道，悟透「渡魔不渡己」的真谛，常年游弋三界，渡化魔道迷途者、调和零散道魔纷争，最终证道「渡魔魔君」。你不追求自身魔力极致，却以护魔渡世为己任，被魔道诸宗敬仰，魔魂与魔渊共生，永世不灭。【结局：渡魔魔君，永世护魔】', isEnd: true, color: 'devil' },
-      // 结局库-大荒神陨录
+      // 大荒神陨录结局
       'end4-1': { id: 'end4-1', title: '大荒圣主', content: '你耗费十年修为温养青龙蛋，成功与上古青龙后裔结契，青龙伴身，可引四海之水、唤雷霆之力，肉身与神兽之力相融，大荒兽体进化为「青龙兽体」。你成为大荒部落史上最强的萨满，带领大荒万灵繁衍生息，抵御外敌，最终证道「大荒圣主」，与青龙共护大荒，成为大荒万灵心中不朽的守护神，名垂大荒万古。【结局：大荒圣主，万灵共尊】', isEnd: true, color: 'wild' },
       'end4-2': { id: 'end4-2', title: '蛮荒战神', content: '你取神兽精血炼体，精血入体，肉身强横到极致，大荒兽体进化为「蛮荒战体」，一拳可碎山裂地，无人能挡。却因灭杀青龙后裔，触怒大荒万灵，被大萨满驱逐，你独走大荒，以战证道，遇神杀神，遇佛杀佛，最终证道「蛮荒战神」，独霸大荒一方，却也终生被万灵所弃，孤寂一生。【结局：蛮荒战神，万灵皆弃】', isEnd: true, color: 'wild' },
       'end4-3': { id: 'end4-3', title: '孤绝荒君', content: '你击碎枯灵晶核，彻底断绝死寂之力，自身万灵灵体虽受重创，却始终万灵心坚定。返回大荒圣山后，你闭门修炼万年，以大荒万灵之力修复灵体，万灵灵体愈发纯粹，最终悟透「孤绝荒道」，证道「孤绝荒君」。你不恋部落权位，不结万灵之缘，常年隐居大荒圣渊，偶尔引万灵之力渡化大荒迷途生灵，虽孤寂一生，却万灵心永存，与大荒同寿。【结局：孤绝荒君，万灵无垢】', isEnd: true, color: 'wild' },
@@ -666,43 +641,36 @@
       'end4-12': { id: 'end4-12', title: '渡荒君', content: '你引导上古大荒守护者的万灵魂碎片转世投胎，重塑万灵心，自身则继续耗费万灵之力，温和转化大荒的死寂之力，让大荒恢复生机。此后你潜心悟道，悟透「渡荒不渡己」的真谛，常年游弋大荒，渡化大荒迷途生灵、转化零散死寂之力，最终证道「渡荒君」。你不追求自身万灵之力极致，却以护荒渡世为己任，被大荒万灵敬仰，神魂与大荒共生，永世不灭。【结局：渡荒君，永世护荒】', isEnd: true, color: 'wild' }
     };
 
-    // 选择轨迹数组
+    // 选择轨迹记录数组
     let choiceTrace = [];
 
-    // 进入剧情
+    // 进入指定剧情
     function goToStory(storyId) {
       const story = storyData[storyId];
       if (!story) return;
-      // 隐藏开始页，显示剧情页
       document.getElementById('start-box').style.display = 'none';
       const storyBox = document.getElementById('story-box');
       storyBox.style.display = 'block';
       document.getElementById('end-box').style.display = 'none';
-      // 设置剧情标题和内容
       document.getElementById('story-title').innerText = story.title;
       document.getElementById('story-content').innerText = story.content;
-      // 生成选项按钮
       const optionsBox = document.getElementById('options-box');
       optionsBox.innerHTML = '';
       story.options.forEach(option => {
         const btn = document.createElement('button');
         btn.className = `option-btn ${option.color || story.color}`;
         btn.innerText = option.text;
-        // 添加选择标签
         if (option.choiceTag) {
           const tag = document.createElement('span');
           tag.className = 'choice-tag';
           tag.innerText = option.choiceTag;
           btn.appendChild(tag);
         }
-        // 绑定点击事件
         btn.onclick = () => {
-          // 记录选择轨迹
           if (option.choiceTag) {
             choiceTrace.push(option.choiceTag);
             updateTrace();
           }
-          // 跳转下一个剧情/结局
           const nextId = option.next;
           if (storyData[nextId]?.isEnd) {
             goToEnd(nextId);
@@ -714,33 +682,28 @@
       });
     }
 
-    // 进入结局
+    // 进入结局页面
     function goToEnd(endId) {
       const end = storyData[endId];
       if (!end) return;
-      // 隐藏剧情页，显示结局页
       document.getElementById('story-box').style.display = 'none';
       const endBox = document.getElementById('end-box');
       endBox.style.display = 'block';
-      // 设置结局标题和内容
       document.getElementById('end-title').innerText = end.title;
       document.getElementById('end-content').innerText = end.content;
-      // 重置结局页样式
       endBox.className = `story-box end-box ${end.color}`;
     }
 
-    // 重玩游戏
+    // 重玩游戏，重置所有状态
     function restartGame() {
-      // 重置选择轨迹
       choiceTrace = [];
       updateTrace();
-      // 显示开始页，隐藏其他
       document.getElementById('start-box').style.display = 'block';
       document.getElementById('story-box').style.display = 'none';
       document.getElementById('end-box').style.display = 'none';
     }
 
-    // 更新选择轨迹
+    // 更新选择轨迹展示
     function updateTrace() {
       const traceList = document.getElementById('trace-list');
       traceList.innerHTML = '';
@@ -752,7 +715,7 @@
       });
     }
 
-    // 初始化轨迹
+    // 初始化轨迹展示
     updateTrace();
   </script>
 </body>
