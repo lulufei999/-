@@ -1,2 +1,294 @@
-# -
+# tianshu
 天书互动文字游戏
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>四卷天书 - 古风修仙文字互动</title>
+    <!-- 内置样式，移除外部CDN依赖，本地运行无压力 -->
+    <style>
+        /* 基础样式重置 */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Noto Serif SC", "SimSun", serif, system-ui; }
+        body { background: #1a1a1a; color: #1a1a1a; min-height: 100vh; padding: 10px; }
+        .container { max-width: 750px; margin: 0 auto; padding: 24px 16px; }
+        /* 动画效果 */
+        .fade-in { animation: fadeIn 0.8s ease-in-out; }
+        .scale-in { animation: scaleIn 0.5s ease-out; }
+        .btn-click { transition: all 0.2s ease; }
+        .btn-click:active { transform: scale(0.98); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* 滚动条隐藏 */
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        /* 古风宣纸背景 */
+        .paper-bg { 
+            background: #f5f0e6; 
+            background-image: linear-gradient(90deg, rgba(44,88,76,0.02) 1px, transparent 1px), 
+            linear-gradient(rgba(44,88,76,0.02) 1px, transparent 1px); 
+            background-size: 20px 20px; 
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        /* 天书描边效果 */
+        .book-tag { text-shadow: 0 0 2px rgba(230,184,0,0.5); }
+        /* 配色定义（内置，无外部依赖） */
+        .text-primary { color: #2c584c; } /* 长生诀-黛青 */
+        .text-star { color: #4a6fa5; }    /* 星河令-星河蓝 */
+        .text-devil { color: #c82525; }   /* 天魔策-朱砂红 */
+        .text-wild { color: #8c5a29; }    /* 大荒神陨录-赭石色 */
+        .text-accent { color: #e6b800; }  /* 通用-藤黄 */
+        .text-light { color: #f5f0e6; }   /* 宣纸白 */
+        .bg-primary-10 { background: rgba(44,88,76,0.1); }
+        .bg-primary-20 { background: rgba(44,88,76,0.2); }
+        .bg-star-10 { background: rgba(74,111,165,0.1); }
+        .bg-star-20 { background: rgba(74,111,165,0.2); }
+        .bg-devil-10 { background: rgba(200,37,37,0.1); }
+        .bg-devil-20 { background: rgba(200,37,37,0.2); }
+        .bg-wild-10 { background: rgba(140,90,41,0.1); }
+        .bg-wild-20 { background: rgba(140,90,41,0.2); }
+        .bg-accent-10 { background: rgba(230,184,0,0.1); }
+        .bg-accent-20 { background: rgba(230,184,0,0.2); }
+        .bg-light-10 { background: rgba(245,240,230,0.1); }
+        .border-primary-30 { border-color: rgba(44,88,76,0.3); }
+        .border-star-30 { border-color: rgba(74,111,165,0.3); }
+        .border-devil-30 { border-color: rgba(200,37,37,0.3); }
+        .border-wild-30 { border-color: rgba(140,90,41,0.3); }
+        .border-accent-30 { border-color: rgba(230,184,0,0.3); }
+    </style>
+</head>
+<body class="scroll-hide">
+    <!-- 页面容器 -->
+    <div class="container">
+        <!-- 标题区 -->
+        <header class="text-center mb-8 fade-in">
+            <h1 style="font-size: clamp(2rem,5vw,3rem); font-weight: bold; background: linear-gradient(to right, #2c584c, #4a6fa5, #c82525); -webkit-background-clip: text; background-clip: text; color: transparent;">四卷天书</h1>
+            <p class="text-light/80 mt-2 display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;">
+                上古天书现世，四卷择一，道途自定
+            </p>
+        </header>
+
+        <!-- 剧情展示区（宣纸背景） -->
+        <main class="paper-bg scale-in" id="story-container">
+            <div class="mb-6" id="story-content">
+                <!-- 剧情由JS动态生成 -->
+            </div>
+            <!-- 选项区 -->
+            <div class="flex flex-col gap-3 mt-6" id="options-container">
+                <!-- 选项由JS动态生成 -->
+            </div>
+        </main>
+
+        <!-- 选择轨迹 + 重置按钮 -->
+        <footer class="flex flex-col justify-between items-center gap-4 fade-in">
+            <div class="bg-light-10 rounded-lg px-4 py-3 w-full">
+                <p class="text-sm text-light/70">你的道途选择：</p>
+                <div class="flex flex-wrap gap-2 mt-2" id="choice-tracker">
+                    <!-- 选择轨迹由JS动态生成 -->
+                </div>
+            </div>
+            <button id="restart-btn" class="btn-click bg-accent-10 hover:bg-accent-20 text-accent transition-colors px-6 py-3 rounded-lg flex items-center gap-2 font-medium" style="border: none; cursor: pointer;">
+                重择天书
+            </button>
+        </footer>
+    </div>
+
+    <script>
+        // ########## 四卷天书核心剧情数据（终极修复版）##########
+        const storyData = {
+            start: {
+                id: 'start',
+                title: '荒古墓府得天书',
+                content: '你本是苍梧山脚下的樵夫，因母亲病重，冒死入深山寻千年灵芝，不慎坠入一处隐世古墓。墓中无金银珠宝，唯有石台上摆着四卷上古天书，卷身萦绕不同灵光：青卷《长生诀》泛着温润道韵，似蕴天地生机；蓝卷《星河令》流转星芒，藏着寰宇星辰之力；黑卷《天魔策》萦绕暗红煞气，透着霸道魔威；褐卷《大荒神陨录》凝着洪荒古意，藏着上古神兽之灵。石台刻字：「四卷择一，道途自定，心之所向，即为归途」。你伸手欲取，需定此生道途。',
+                options: [
+                    { text: '取青卷《长生诀》，修天地生机，求长生久视', next: 'changsheng', choiceTag: '择长生诀', color: 'primary' },
+                    { text: '取蓝卷《星河令》，掌寰宇星芒，踏星河道途', next: 'xinghe', choiceTag: '择星河令', color: 'star' },
+                    { text: '取黑卷《天魔策》，融魔焰煞气，走逆天魔途', next: 'tianmo', choiceTag: '择天魔策', color: 'devil' },
+                    { text: '取褐卷《大荒神陨录》，承洪荒古意，炼神兽之体', next: 'dahuang', choiceTag: '择大荒神陨录', color: 'wild' }
+                ]
+            },
+            changsheng: {
+                id: 'changsheng',
+                title: '玄元道宗悟长生',
+                content: '《长生诀》入手，青芒入体，觉醒先天灵根「乙木灵体」，墓府外恰逢玄元道宗长老云游，见你身蕴长生道韵，收你为亲传弟子，带入玄元山修仙。三载筑基，五载凝液，你深得《长生诀》精髓，可引天地生机疗伤续命，成宗门年轻一辈翘楚。恰逢宗门开启「长生秘境」，秘境核心有「长生莲」，服之可增千年寿元，却也有「心魔莲」混杂其中，取之可速成修为，却会引长生道韵反噬。秘境之中，长生莲与心魔莲并生，你当如何抉择？',
+                options: [
+                    { text: '弃心魔莲，静心采长生莲，循正道修长生', next: 'end1-1', choiceTag: '守正采莲', color: 'primary' },
+                    { text: '采心魔莲，以力破境，哪怕道韵反噬也要速成', next: 'end1-2', choiceTag: '取魔速成', color: 'primary' }
+                ],
+                color: 'primary'
+            },
+            xinghe: {
+                id: 'xinghe',
+                title: '星河仙宗掌星力',
+                content: '《星河令》入手，星芒灌体，觉醒先天灵根「星辰灵体」，墓府上空星河垂落，星河仙宗宗主亲至，称你为「星河传人」，将你带入星河天宫。你修《星河令》，可引北斗星力炼体，召流星御敌，三载筑基便已能引星芒凝剑，远超同辈。宗门有「星河阵眼」，掌之可调动星河之力，成为下一任宗主，却需以自身灵体为引，永世镇守阵眼；若放弃阵眼，可携《星河令》云游四方，自在修炼，却难登星河道巅峰。阵眼开启，宗主传位在即，你作何选择？',
+                options: [
+                    { text: '承阵眼之责，以灵体镇星河，守宗门万世', next: 'end2-1', choiceTag: '守阵护宗', color: 'star' },
+                    { text: '弃阵眼之责，携天书云游，求自在登巅峰', next: 'end2-2', choiceTag: '弃阵云游', color: 'star' }
+                ],
+                color: 'star'
+            },
+            tianmo: {
+                id: 'tianmo',
+                title: '天魔谷中掌魔威',
+                content: '《天魔策》入手，暗红魔焰入体，觉醒先天灵根「先天魔体」，墓府外天魔谷谷主寻来，见你魔体纯粹，收你为少谷主，带入天魔谷修魔。你修《天魔策》，可凝魔焰炼魂，化煞气御敌，三年便筑基成魔将，魔威震慑谷中众人。恰逢仙门联军围剿天魔谷，谷主重伤，传你「天魔印」，引之可燃自身魔魂，爆发出超越自身十倍的力量，击退仙门，却会折损千年寿元；若弃天魔印，可率谷中弟子退守魔渊，暂避锋芒，待日后卷土重来。仙门兵临城下，你当抉择？',
+                options: [
+                    { text: '引天魔印，燃魔魂退敌，护天魔谷周全', next: 'end3-1', choiceTag: '燃魂护谷', color: 'devil' },
+                    { text: '弃天魔印，率弟子退守魔渊，待他日复仇', next: 'end3-2', choiceTag: '退守魔渊', color: 'devil' }
+                ],
+                color: 'devil'
+            },
+            dahuang: {
+                id: 'dahuang',
+                title: '大荒部落炼兽体',
+                content: '《大荒神陨录》入手，洪荒古意入体，觉醒先天灵根「大荒兽体」，墓府外大荒部落大萨满寻来，称你为「神陨传人」，将你带入大荒圣山。你修《大荒神陨录》，可引上古神兽之灵炼体，与大荒凶兽沟通，三载筑基便炼出「玄武护体」，肉身强横无匹。大荒圣山有「神兽蛋」，乃上古青龙后裔，温养之可与之结契，共修大道，却需耗费自身十年修为；若取「神兽精血」，可直接炼体，肉身再上一层，却会令青龙后裔身死道消。圣山禁地，神兽蛋与精血皆在，你作何选择？',
+                options: [
+                    { text: '耗修为温养神兽蛋，结契青龙共修大荒道', next: 'end4-1', choiceTag: '温养结契', color: 'wild' },
+                    { text: '取神兽精血炼体，强肉身哪怕损上古后裔', next: 'end4-2', choiceTag: '取血炼体', color: 'wild' }
+                ],
+                color: 'wild'
+            },
+            'end1-1': { id: 'end1-1', title: '长生道祖', content: '你弃心魔莲，静心采得长生莲，莲韵入体，乙木灵体圆满，长生道韵无一丝杂质。此后你循正道修炼，百年结丹，五百年化婴，千年炼虚，最终悟透长生真谛，证道「长生道祖」，寿元无尽，坐镇玄元道宗，引天地生机滋养万物，成为修仙界正道标杆，凡有大劫，皆以生机渡之，名垂仙史，万古流芳。【结局：长生道祖，寿元无尽】', isEnd: true, color: 'primary' },
+            'end1-2': { id: 'end1-2', title: '短命魔仙', content: '你采下心魔莲，药力入体，修为一日千里，半年便凝液，一年便结丹，却也引长生道韵反噬，乙木灵体受损，寿元折损九成。你虽成一方魔仙，战力强横，却活不过三十载，最终在寿元耗尽之际，坐化于玄元山脚下，临终前悔悟，却已无力回天，只留一句「长生非速，守心方久」。【结局：短命魔仙，悔不当初】', isEnd: true, color: 'primary' },
+            'end2-1': { id: 'end2-1', title: '星河帝君', content: '你承阵眼之责，以星辰灵体为引，镇守星河阵眼，《星河令》与阵眼相融，你可调动整个星河的力量，成为星河仙宗史上最年轻的宗主。百年后，你借阵眼之力，悟透星河大道，证道「星河帝君」，身化星河，与阵眼共存，星河仙宗因你而成为修仙界第一宗门，寰宇星芒皆听你号令，万仙敬仰。【结局：星河帝君，身化星河】', isEnd: true, color: 'star' },
+            'end2-2': { id: 'end2-2', title: '星河散仙', content: '你弃阵眼之责，携《星河令》云游四方，不受宗门束缚，在星河之中寻得诸多星辰秘境，修为一日千里。百年结丹，三百年化婴，最终悟透星河自在之道，证道「星河散仙」，无拘无束，可踏星河而行，可隐凡尘而居，虽未登星河道巅峰，却活得潇洒自在，成为修仙界最令人羡慕的散仙。【结局：星河散仙，自在逍遥】', isEnd: true, color: 'star' },
+            'end3-1': { id: 'end3-1', title: '天魔圣主', content: '你引天魔印，燃自身魔魂，爆发出十倍战力，魔焰焚天，击退仙门联军，护住了天魔谷。谷主伤愈后，传位与你，成为天魔谷新谷主。你以魔魂受损为代价，悟透「魔亦有义」，一改天魔谷杀伐之名，接纳天下落魄修士，百年后证道「天魔圣主」，魔威与仁心并存，仙魔两道皆不敢轻易招惹，天魔谷成为一方净土。【结局：天魔圣主，魔道仁君】', isEnd: true, color: 'devil' },
+            'end3-2': { id: 'end3-2', title: '逆天魔尊', content: '你率弟子退守魔渊，借魔渊煞气疗伤，修《天魔策》至巅峰，融魔渊煞气炼体，成「天魔之躯」。百年后，你率魔渊大军卷土重来，杀伐果断，血洗仙门联军，报当年围剿之仇。你悟透逆天魔道，证道「逆天魔尊」，魔威震慑三界，却也因杀伐过重，无一人相伴，最终独守魔渊，孤老终生。【结局：逆天魔尊，孤守魔渊】', isEnd: true, color: 'devil' },
+            'end4-1': { id: 'end4-1', title: '大荒兽祖', content: '你耗十年修为温养青龙神兽蛋，蛋破壳，青龙后裔认你为主，二者结契，你借青龙之力，悟透大荒神兽大道，《大荒神陨录》圆满。你率大荒部落，与上古神兽共生，护佑大荒万族，百年后证道「大荒兽祖」，肉身强横无匹，可召万兽听令，大荒圣山成为上古神兽的栖息地，万族敬仰，大荒道统传承万古。【结局：大荒兽祖，万兽共主】', isEnd: true, color: 'wild' },
+            'end4-2': { id: 'end4-2', title: '荒古战神', content: '你取青龙精血炼体，肉身突破至「荒古战体」，战力冠绝三界，却也因灭杀青龙后裔，被大荒万兽所弃，大萨满也与你决裂。你独走大荒，以战证道，遇妖斩妖，遇魔斩魔，百年后证道「荒古战神」，肉身无敌，却无一人可交心，最终独守大荒禁地，与古兽为伴，孤独终老。【结局：荒古战神，独守大荒】', isEnd: true, color: 'wild' }
+        };
+
+        // 全局变量
+        let currentChapter = 'start';
+        let userChoices = [];
+
+        // DOM 元素
+        const storyContent = document.getElementById('story-content');
+        const optionsContainer = document.getElementById('options-container');
+        const choiceTracker = document.getElementById('choice-tracker');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // 初始化页面
+        window.onload = () => {
+            renderChapter(currentChapter);
+            bindRestartEvent();
+        };
+
+        // 渲染章节（终极修复，无任何外部依赖）
+        function renderChapter(chapterId) {
+            const chapter = storyData[chapterId];
+            if (!chapter) return;
+
+            // 清空内容
+            storyContent.innerHTML = '';
+            optionsContainer.innerHTML = '';
+
+            // 匹配章节配色
+            let titleColor = 'accent';
+            if (chapter.color) titleColor = chapter.color;
+            else if (chapterId === 'changsheng') titleColor = 'primary';
+            else if (chapterId === 'xinghe') titleColor = 'star';
+            else if (chapterId === 'tianmo') titleColor = 'devil';
+            else if (chapterId === 'dahuang') titleColor = 'wild';
+
+            // 渲染标题+剧情（古风首行缩进）
+            storyContent.innerHTML = `
+                <h2 style="font-size: clamp(1.5rem,3vw,2rem); font-weight: bold; margin-bottom: 16px; color: var(--${titleColor}); border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 8px;" class="text-${titleColor}">${chapter.title}</h2>
+                <p style="line-height: 1.8; text-indent: 2em; font-size: 14px;">${chapter.content}</p>
+            `;
+            // 手动给标题加对应颜色
+            document.querySelector('#story-content h2').classList.add(`text-${titleColor}`);
+            document.querySelector('#story-content h2').style.borderBottomColor = `rgba(var(--${titleColor}-rgb), 0.3)`;
+
+            // 渲染选项（非结局显示，专属配色+点击反馈）
+            if (!chapter.isEnd) {
+                chapter.options.forEach((option, index) => {
+                    const btn = document.createElement('button');
+                    const color = option.color || 'accent';
+                    btn.className = `bg-${color}-10 hover:bg-${color}-20 border border-${color}-30 transition-all scale-in py-3 px-4 rounded-lg text-left hover:translateX-4 btn-click`;
+                    btn.style.animationDelay = `${index * 0.15}s`;
+                    btn.style.border = `1px solid rgba(0,0,0,0.1)`;
+                    btn.style.fontSize = '14px';
+                    btn.style.cursor = 'pointer';
+                    btn.innerHTML = option.text;
+                    // 手动加对应背景和边框色
+                    btn.style.background = `rgba(var(--${color}-rgb), 0.1)`;
+                    btn.style.borderColor = `rgba(var(--${color}-rgb), 0.3)`;
+                    btn.onmouseover = () => { btn.style.background = `rgba(var(--${color}-rgb), 0.2)`; btn.style.transform = 'translateX(4px)'; };
+                    btn.onmouseout = () => { btn.style.background = `rgba(var(--${color}-rgb), 0.1)`; btn.style.transform = 'translateX(0)'; };
+                    btn.onclick = () => {
+                        userChoices.push(option.choiceTag);
+                        currentChapter = option.next;
+                        renderChapter(currentChapter);
+                        renderChoiceTracker();
+                    };
+                    optionsContainer.appendChild(btn);
+                });
+            } else {
+                // 结局提示（专属配色）
+                const endTip = document.createElement('p');
+                endTip.className = `mt-6 text-center text-${titleColor}/80 italic border-t border-${titleColor}-30 pt-3`;
+                endTip.style.marginTop = '24px';
+                endTip.style.paddingTop = '12px';
+                endTip.style.borderTop = `1px solid rgba(var(--${titleColor}-rgb), 0.3)`;
+                endTip.style.color = `rgba(var(--${titleColor}-rgb), 0.8)`;
+                endTip.style.fontSize = '14px';
+                endTip.innerHTML = `道途已定，天书缘尽，点击「重择天书」可再启仙途`;
+                storyContent.appendChild(endTip);
+            }
+        }
+
+        // 渲染选择轨迹（天书专属描边+配色）
+        function renderChoiceTracker() {
+            choiceTracker.innerHTML = '';
+            if (userChoices.length === 0) return;
+            userChoices.forEach(choice => {
+                // 轨迹标签适配对应天书颜色
+                let color = 'accent';
+                if (choice.includes('长生')) color = 'primary';
+                if (choice.includes('星河')) color = 'star';
+                if (choice.includes('天魔')) color = 'devil';
+                if (choice.includes('大荒')) color = 'wild';
+
+                const tag = document.createElement('span');
+                tag.className = `bg-${color}-10 text-${color} px-3 py-1 rounded-full text-xs book-tag`;
+                tag.style.padding = '4px 12px';
+                tag.style.borderRadius = '20px';
+                tag.style.fontSize = '12px';
+                tag.style.background = `rgba(var(--${color}-rgb), 0.1)`;
+                tag.style.color = `rgb(var(--${color}-rgb))`;
+                tag.textContent = choice;
+                choiceTracker.appendChild(tag);
+            });
+        }
+
+        // 重择天书事件（优化点击反馈）
+        function bindRestartEvent() {
+            restartBtn.onclick = () => {
+                currentChapter = 'start';
+                userChoices = [];
+                renderChapter(currentChapter);
+                renderChoiceTracker();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+        }
+
+        // 初始化颜色变量（解决样式依赖）
+        (function initColorVars() {
+            const style = document.createElement('style');
+            style.textContent = `
+                :root {
+                    --primary-rgb: 44,88,76;
+                    --star-rgb: 74,111,165;
+                    --devil-rgb: 200,37,37;
+                    --wild-rgb: 140,90,41;
+                    --accent-rgb: 230,184,0;
+                }
+            `;
+            document.head.appendChild(style);
+        })();
+    </script>
+</body>
+</html>
